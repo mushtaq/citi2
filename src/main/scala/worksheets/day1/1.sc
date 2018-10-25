@@ -16,36 +16,42 @@ def square(x: Int): Int = x * x
 square(19)
 
 
-trait Op[A, B] {
-  def invoke(x: A): B
-}
+val squareOp: Int => Int = x => x * x
 
-val squareOp: Op1[Int, Int] = new Op1[Int, Int] {
-  override def invoke(x: Int): Int = x * x
-}
-
-def map[A, B](xs: List[A], op: Op1[A, B]): List[B] = {
+def map[A, B](xs: List[A], op: A => B): List[B] = {
   val iterator = xs.iterator
   val result: mutable.Buffer[B] = mutable.Buffer.empty
 
   while (iterator.hasNext) {
-    result += op.invoke(iterator.next())
+    result += op(iterator.next())
   }
 
   result.toList
 }
 
-def map2[A, B](xs: List[A], op: Op1[A, B]): List[B] = {
+def map2[A, B](xs: List[A], op: A => B): List[B] = {
   val iterator = xs.iterator
   var result: List[B] = List.empty
 
   while (iterator.hasNext) {
-    result = op.invoke(iterator.next()) :: result
+    result = op(iterator.next()) :: result
   }
 
   result.reverse
 }
 
+def map3[A, B](xs: List[A], op: A => B): List[B] = {
+  if(xs.isEmpty) List.empty else  op(xs.head) :: map3(xs.tail, op)
+}
 
-map2(xs, squareOp)
+def map4[A, B](xs: List[A], op: A => B): List[B] = {
+  def loop(rem: List[A], res: List[B]): List[B] = {
+    if(rem.isEmpty) res else loop(rem.tail, op(rem.head) :: res)
+  }
+
+  loop(xs, Nil).reverse
+}
+
+
+map4((1 to 10000).toList, squareOp)
 
