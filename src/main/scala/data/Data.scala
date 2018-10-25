@@ -11,7 +11,7 @@ object Person {}
 case class Book(
     author: String,
     title: String,
-    basePrice: Double
+    price: Double
 )
 
 object Book {}

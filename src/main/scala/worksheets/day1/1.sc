@@ -44,11 +44,11 @@ def map3[A, B](xs: List[A], op: A => B): List[B] = {
   if(xs.isEmpty) List.empty else  op(xs.head) :: map3(xs.tail, op)
 }
 
-def loop[A, B](xs: List[A], acc: B)(f: (B, A) => B): B = {
-  if(xs.isEmpty) acc else loop(xs.tail, f(acc, xs.head))(f)
+def loop[A, B](xs: List[A], seed: B)(f: (B, A) => B): B = {
+  if(xs.isEmpty) seed else loop(xs.tail, f(seed, xs.head))(f)
 }
 
-def map4[A, B](xs: List[A], op: A => B): List[B] = {
+def map4[A, B](xs: List[A])(op: A => B): List[B] = {
   loop(xs, List.empty[B])((acc, elm) => op(elm) :: acc).reverse
 }
 
@@ -56,7 +56,16 @@ def filter2[T](xs: List[T])(op: T => Boolean): List[T] = {
   loop(xs, List.empty[T])((acc, elm) => if(op(elm)) elm :: acc else acc).reverse
 }
 
+def reverse[A](xs: List[A]): List[A] = {
+  loop(xs, List.empty[A])((acc, elm) => elm :: acc)
+}
 
-map4((1 to 10000).toList, squareOp)
+def stringify[A](xs: List[A]): String = {
+  loop(xs, "")((acc, elm) => acc + elm.toString)
+}
+
+map4((1 to 10000).toList)(x => x * x)
 filter2(xs)(x => x % 2 == 0)
+reverse((1 to 10000).toList)
+stringify((1 to 10000).toList)
 
