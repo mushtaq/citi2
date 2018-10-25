@@ -44,14 +44,19 @@ def map3[A, B](xs: List[A], op: A => B): List[B] = {
   if(xs.isEmpty) List.empty else  op(xs.head) :: map3(xs.tail, op)
 }
 
-def map4[A, B](xs: List[A], op: A => B): List[B] = {
-  def loop(rem: List[A], res: List[B]): List[B] = {
-    if(rem.isEmpty) res else loop(rem.tail, op(rem.head) :: res)
-  }
+def loop[A, B](xs: List[A], acc: B)(f: (B, A) => B): B = {
+  if(xs.isEmpty) acc else loop(xs.tail, f(acc, xs.head))(f)
+}
 
-  loop(xs, Nil).reverse
+def map4[A, B](xs: List[A], op: A => B): List[B] = {
+  loop(xs, List.empty[B])((acc, elm) => op(elm) :: acc).reverse
+}
+
+def filter2[T](xs: List[T])(op: T => Boolean): List[T] = {
+  loop(xs, List.empty[T])((acc, elm) => if(op(elm)) elm :: acc else acc).reverse
 }
 
 
 map4((1 to 10000).toList, squareOp)
+filter2(xs)(x => x % 2 == 0)
 
