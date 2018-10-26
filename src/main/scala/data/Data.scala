@@ -1,4 +1,5 @@
 package data
+import code.Ord
 
 case class Address(street: String, pin: Int)
 
@@ -14,7 +15,9 @@ case class Book(
     price: Double
 )
 
-object Book {}
+object Book {
+  implicit val bookOrd: Ord[Book] = (a: Book, b: Book) => a.price < b.price
+}
 
 object Data {
 

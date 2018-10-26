@@ -5,22 +5,25 @@ trait Ord[T] {
 }
 
 object Ord {
-  val intOrd: Ord[Int]    = (a: Int, b: Int) => a < b
-  val strOrd: Ord[String] = (a: String, b: String) => a < b
+  implicit val intOrd: Ord[Int]    = (a: Int, b: Int) => a < b
+  implicit val strOrd: Ord[String] = (a: String, b: String) => a < b
 
-  def optOrd[T](ord: Ord[T]): Ord[Option[T]] =
+  implicit def optOrd[T: Ord]: Ord[Option[T]] =
     (a: Option[T], b: Option[T]) =>
       (a, b) match {
-        case (Some(x), Some(y)) => ord.lt(x, y)
+        case (Some(x), Some(y)) => x < y
         case (_, None)          => false
         case (None, _)          => true
     }
 
-  def pairOrd[T1, T2](ord1: Ord[T1], ord2: Ord[T2]): Ord[(T1, T2)] = new Ord[(T1, T2)] {
-    override def lt(a: (T1, T2), b: (T1, T2)): Boolean = {
-      if (ord1.lt(a._1, b._1)) true
-      else if (ord1.lt(b._1, a._1)) false
-      else ord2.lt(a._2, b._2)
+  implicit def pairOrd[T1: Ord, T2: Ord]: Ord[(T1, T2)] =
+    (a: (T1, T2), b: (T1, T2)) => {
+      if (a._1 < b._1) true
+      else if (b._1 < a._1) false
+      else a._2 < b._2
     }
+
+  implicit class RichT[T](val a: T) {
+    def <(b: T)(implicit ord: Ord[T]): Boolean = ord.lt(a, b)
   }
 }

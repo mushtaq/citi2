@@ -2,6 +2,8 @@
 import data.JsDemo
 import play.api.libs.json._
 
+Map(1 -> "a", 2 -> "b")
+
 val json: JsValue = Json.obj(
   "a" -> 10,
   "b" -> true,
