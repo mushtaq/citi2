@@ -27,4 +27,3 @@ val json: JsValue = Json.obj(
 
 val result = JsDemo.transform(json)
 Json.prettyPrint(result)
-JsDemo.dd()
